@@ -1,0 +1,59 @@
+OS=`uname -s | cut -d"_" -f1`
+if [ $OS = "Linux" ]; then
+	MYOS=LINUX
+	MYTARGET=_linux
+	MYCC=g++
+	MYCC_OPTS="-static"
+	MYAR=/usr/bin/ar
+	MYSOCKET_LIBS=
+	MYRM="/bin/rm -f"
+	MYEXE_SUFFIX=""
+elif [ $OS = "Darwin" ]; then
+	MYOS=MAC
+	MYTARGET=_macosx
+	MYCC=g++
+	MYCC_OPTS="-dynamic"
+	MYAR=/usr/bin/ar
+	MYSOCKET_LIBS=
+	MYRM="/usr/bin/rm -f"
+	MYEXE_SUFFIX=""
+elif [ $OS = "HP-UX" ]; then
+	MYOS=HPUX
+	MYTARGET=_hpux
+	MYCC=gcc
+	MYCC_OPTS="-static"
+	MYAR=/usr/bin/ar
+	MYSOCKET_LIBS=
+	MYRM="/usr/bin/rm -f"
+	MYEXE_SUFFIX=""
+elif [ $OS = "SunOS" ]; then
+	MYOS=SOLARIS
+	MYTARGET=_solaris
+	MYCC=gcc
+	MYCC_OPTS=
+	MYAR=/usr/ccs/bin/ar
+	MYSOCKET_LIBS="-lsocket -lnsl"
+	MYRM="/usr/bin/rm -f"
+	MYEXE_SUFFIX=""
+elif [ $OS = "CYGWIN" ]; then
+        MYOS=CYGWIN
+        MYTARGET=_cygwin
+        MYCC=g++
+        MYCC_OPTS="-static"
+        MYAR=/usr/bin/ar
+        MYSOCKET_LIBS=
+        MYRM="/bin/rm -f"
+	MYEXE_SUFFIX=".exe"
+else
+	echo "Sistema operativo desconocido: $OS"
+	exit 1
+fi
+
+export MYOS MYTARGET MYCC MYCC_OPTS MYAR MYSOCKET_LIBS MYRM MYEXE_SUFFIX
+echo "Sistema operativo: $MYOS"
+echo "Target: $MYTARGET"
+
+mkdir $MYTARGET 2> /dev/null
+
+make $*
+exit $?
