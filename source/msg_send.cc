@@ -5,9 +5,10 @@
 
 int	main( int argc, char *argv[] ){
 
-	int		c;
+	int	c;
 	char	caux[1024];
 	char	*ptr;
+	char	cr='\0';
 
 	char	*host=NULL;
 	char	*from=NULL;
@@ -19,7 +20,7 @@ int	main( int argc, char *argv[] ){
 	FILE	*log_file=NULL;
 	FILE	*stream=NULL;
 
-	while ( ( c = getopt( argc, argv, "?th:f:p:x:u:d:s:" ) ) != EOF ){
+	while ( ( c = getopt( argc, argv, "?th:f:p:x:u:d:s:n:" ) ) != EOF ){
 		switch( c ){
 		case	'h':
 			host=optarg;
@@ -45,6 +46,9 @@ int	main( int argc, char *argv[] ){
 		case	't':
 			log_file=stdout;
 			break;
+		case	'n':
+			cr=optarg[0];
+			break;
 		case	'?':
 		default:
 			fprintf( stderr, "%s -h <hostname> -u <user> -f <from> [-p <passwd>] [-s <subject>] [-d <file>] [-x <to>] [-t]\n", argv[0] );
@@ -58,7 +62,7 @@ int	main( int argc, char *argv[] ){
 	} // if
 
 	try{
-		SMTPClass	smtp( host, user, passwd, log_file );
+		SMTPClass smtp( host, user, passwd, log_file, cr );
 		if ( !file ) smtp.send( from, to, subject, stdin );
 		else{
 			if ( !( stream=fopen( file, "r" ) ) )

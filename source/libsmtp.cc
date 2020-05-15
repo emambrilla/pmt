@@ -2,7 +2,7 @@
 #include	"libsmtp.h"
 #include	"libpipe.h"
 
-SMTPClass::SMTPClass( const char hostname[], const char user[], const char passwd[], FILE *stream ){
+SMTPClass::SMTPClass( const char hostname[], const char user[], const char passwd[], FILE *stream, char cr ){
 
 	struct	servent	*srv;
 	char	buffer[4096];
@@ -10,6 +10,7 @@ SMTPClass::SMTPClass( const char hostname[], const char user[], const char passw
 	// Inicializacion de miembro de la clase
 	s=-1;
 	log_stream=stream;
+	smtp_cr=cr;
 
 	if ( !( srv = getservbyname( "smtp", "tcp" ) ) )
 		sprintf( buffer, "%d", 25 );
@@ -170,8 +171,11 @@ void	SMTPClass::send( const char from[], const char to[], const char subject[], 
 		for( ; ; ){
 			l=fread( buffer, 1, sizeof( buffer ), stream );
 			if ( l > 0 ){
-				for ( j=0; j < l; j++ )
-					if ( buffer[j] == '~' ) buffer[j]='\n';
+				if ( smtp_cr != '\0' ){
+					for ( j=0; j < l; j++ ){
+						if ( buffer[j] == smtp_cr ) buffer[j]='\n';
+					} // for
+				} // if
 				write( s, buffer, l );
 				if ( l < sizeof( buffer ) ) break;
 			} // if

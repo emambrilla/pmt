@@ -15,17 +15,18 @@
 class	SMTPClass{
 
 private:
-	int		s;
-	int		readln( char buffer[], int sizeof_buffer );
+	int	s;
+	int	readln( char buffer[], int sizeof_buffer );
 	void	writeln( const char buffer[] );
-	int		lncode_get( const char buffer[] );
+	int	lncode_get( const char buffer[] );
 	void	quit();
+	char	smtp_cr;
 
 	FILE	*log_stream;
 
 public:
 	SMTPClass( const char hostname[], const char user[], const char passwd[]=NULL, 
-				FILE *stream=NULL );
+		FILE *stream=NULL, char cr='\0' );
 	~SMTPClass(){ 
 		try{ 
 			if ( s >= 0 ) quit();
